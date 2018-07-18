@@ -1,0 +1,25 @@
+
+C_ARGS = -g -Wall
+CC = g++
+INC_COMM_DIR = -I../ -I../inc/Common -I../inc/Kernel
+
+.cpp.o:
+	$(CC) $(C_ARGS) $(INC_COMM_DIR) -c $^ 
+
+.c.o:
+	$(CC) $(C_ARGS) $(INC_COMM_DIR) -c $^ 
+
+
+SRC = $(wildcard *.cpp)
+OBJ = $(patsubst %.cpp, %.o, $(SRC))
+
+BINARY = libgxx_common.a
+
+all:$(BINARY)
+
+$(BINARY):$(OBJ)
+	ar -rv $@ $^
+	cp $(BINARY) ../
+
+clean:
+	rm -f *.o $(BINARY) ../$(BINARY)

@@ -1,0 +1,24 @@
+DIR = liba libb
+CXX = g++
+AR = ar
+CXXFLAGS = -g -O2 -Wall -pipe
+INC = -I./ -I./inc/Common -I./inc/Kernel
+
+CPPS = $(shell find $(DIR) -name '*.cpp')
+OBJS = $(patsubst %.cpp, %.o, $(CPPS))
+
+%.o : %.cpp 
+	$(CXX) -c $(CXXFLAGS) $^ -o $@ $(INC)
+
+TARGET = libtest.a
+
+all : $(TARGET)
+
+$(TARGET) : $(OBJS)
+	$(AR) rvc $(TARGET) $(OBJS)
+
+
+clean :
+	@rm -f $(TARGET)
+	@find $(DIR) -name '*.o' | xargs rm -f
+

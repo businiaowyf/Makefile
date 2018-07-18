@@ -1,0 +1,44 @@
+#定义开发根目录
+BASE_DIR = ..
+#设置生产的obj文件所放的路径 
+OBJ_DIR:=./obj
+#设置可执行程序所放的路径
+RELEASE_DIR:=.
+
+#包含makefile公共头文件,定义了基础库和头文件的路径
+include $(BASE_DIR)/make/Inc.mk
+
+#
+#添加库和头文件路径
+#
+#LINK_INC:=添加的路径 $(LINK_INC)
+#LINK_LIB:= 添加的库 $(LINK_LIB)
+
+LINK_INC:= -I../lib/ssdb -I../lib/cache -I../lib/p2p $(LINK_INC)
+LINK_LIB:= -lssdb-client -lmoment_proto -lmoment_store -lcache_proto -lp2p_proto -lprotobuf $(LINK_LIB)
+
+#所有的目标文件必须在这指定
+TARGET = moment_logic_cmnt
+
+
+all:${TARGET}
+
+${TARGET}:main.o CMntLogicCmntApp.o  my_util.o CPostCmntService.o CForwardApi.o \
+		CBaseService.o CSsdbConnManager.o CPostLikeService.o CGetCidListService.o \
+		CDelCmntService.o CGetCidContentService.o CGetLikeInfoService.o CGetBaseCmntInfoService.o \
+		CGetNotifyService.o CGetUserInfoService.o CGetLikeListService.o CUserCacheApi.o \
+		CP2PApi.o CMomentApi.o
+	$(CXX) -o $(RELEASE_DIR)/$@ $(patsubst %.o,$(OBJ_DIR)/%.o,$(^F)) $(LINK_LIB)
+
+install:
+	cp $(TARGET) $(BINARY).conf  ../bin
+scp1:
+	rsync -tu $(TARGET) root@119.28.7.210:/home/ht/moment/bin/logic_comment
+scp2:
+	rsync -tu $(TARGET) root@119.28.52.128:/home/ht/moment/bin/logic_comment
+
+
+#Build.mk定义了自动编译的规则，包括头文件的依赖关系
+#注意，一定要放在makefile的最后
+include $(BASE_DIR)/make/Build.mk
+
